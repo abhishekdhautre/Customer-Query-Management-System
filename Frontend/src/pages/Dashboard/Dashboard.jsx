@@ -38,7 +38,7 @@ function UserDashboard() {
       if (acc[status] !== undefined) {
         acc[status]++;
       }
-      if (q.priority === 'High') {
+      if (q.priority?.toLowerCase() === 'high') {
         acc.highPriority++;
       }
       return acc;
@@ -106,12 +106,8 @@ function AdminDashboard() {
   useEffect(() => {
     Promise.all([
       getQueriesStats().then(({ data }) => data.data).catch(() => ({ open: 0, 'in-progress': 0, resolved: 0, closed: 0 })),
-      getQueries({ limit: 5, page: 1 }).then(({ data }) => {
-        // Compute high priority stats manually if backend doesn't provide
-        return data.data;
-      }).catch(() => []),
-      // Also let's get all to compute high priority if needed, or rely on stats if they add it. Let's compute manually from recent for now, or just get all briefly if required. Assuming getQueriesStats gives us basic, we will compute highPriority from the recent list as a fallback, or just 0 if not provided. Actually, the prompt says "Display four summary cards... High Priority Queries". Let's fetch all queries or assume stats provides it. If stats doesn't, we will default to 0.
-      getQueries({ limit: 1, page: 1, priority: 'High' }).then(({ data }) => data.meta?.total || 0).catch(() => 0)
+      getQueries({ limit: 5, page: 1 }).then(({ data }) => data.data).catch(() => []),
+      getQueries({ limit: 1, page: 1, priority: 'high' }).then(({ data }) => data.meta?.total || 0).catch(() => 0)
     ]).then(([s, q, highPriorityCount]) => { 
       setStats({ ...s, highPriority: highPriorityCount }); 
       setRecent(q); 

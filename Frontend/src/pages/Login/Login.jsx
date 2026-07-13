@@ -72,25 +72,25 @@ export default function Login() {
           {tab === 'register' && (
             <div className={styles.field}>
               <label>Full name</label>
-              <input type="text" placeholder="Jane Smith" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
+              <input type="text" placeholder="Name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
             </div>
           )}
 
           {tab !== 'admin' ? (
             <div className={styles.field}>
               <label>Email</label>
-              <input type="email" placeholder="you@example.com" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
+              <input type="email" placeholder="Enter your email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
             </div>
           ) : (
             <div className={styles.field}>
               <label>Username</label>
-              <input type="text" placeholder="admin" value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} required />
+              <input type="text" placeholder="Enter your username" value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} required />
             </div>
           )}
 
           <div className={styles.field}>
             <label>Password</label>
-            <input type="password" placeholder="••••••••" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required />
+            <input type="password" placeholder="Enter your password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required />
           </div>
 
           <button type="submit" disabled={loading} className="btn-primary" style={{ width: '100%', marginTop: '8px' }}>
