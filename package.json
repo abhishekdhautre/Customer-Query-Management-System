@@ -1,0 +1,7 @@
+{
+  "name": "customer-query-management-system-root",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "npm install --prefix Frontend && npm run build --prefix Frontend"
+  }
+}
