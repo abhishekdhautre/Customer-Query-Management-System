@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { getQueryById, deleteQuery } from '../../services/queryService.js';
+import { getQueryById, deleteQuery, updateQuery } from '../../services/queryService.js';
 import StatusBadge from '../../components/StatusBadge/StatusBadge.jsx';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal.jsx';
 import Loader from '../../components/Loader/Loader.jsx';
@@ -29,6 +29,23 @@ export default function QueryDetails() {
       navigate(isAdmin ? '/queries' : '/');
     } catch {
       setError('Failed to delete query.');
+    }
+  };
+
+  const handleStatusChange = async (newStatus) => {
+    try {
+      const updatedData = {
+        title: query.title,
+        description: query.description,
+        customerName: query.customerName,
+        customerEmail: query.customerEmail,
+        priority: query.priority,
+        status: newStatus,
+      };
+      await updateQuery(id, updatedData);
+      setQuery((prev) => ({ ...prev, status: newStatus }));
+    } catch {
+      setError('Failed to update status.');
     }
   };
 
@@ -82,14 +99,28 @@ export default function QueryDetails() {
         <div className={styles.detailRow}>
           <div className={styles.detailLabel}>Status</div>
           <div className={styles.detailValue}>
-            <StatusBadge status={query.status} />
+            {isAdmin ? (
+              <select
+                value={query.status}
+                onChange={(e) => handleStatusChange(e.target.value)}
+                className={`${styles.statusSelect} ${styles[query.status]}`}
+              >
+                {['open', 'in-progress', 'resolved', 'closed'].map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <StatusBadge status={query.status} />
+            )}
           </div>
         </div>
 
         <div className={styles.detailRow}>
           <div className={styles.detailLabel}>Priority</div>
-          <div className={styles.detailValue} style={{ textTransform: 'capitalize' }}>
-            {query.priority}
+          <div className={styles.detailValue}>
+            <span className={`priority-${(query.priority || 'medium').toLowerCase()}`}>{query.priority}</span>
           </div>
         </div>
 

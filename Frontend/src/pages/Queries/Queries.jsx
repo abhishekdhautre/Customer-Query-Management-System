@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getQueries, getMyQueries, deleteQuery } from '../../services/queryService.js';
+import { getQueries, getMyQueries, deleteQuery, updateQuery } from '../../services/queryService.js';
 import { useAuth } from '../../context/AuthContext.jsx';
 import QueryTable from '../../components/QueryTable/QueryTable.jsx';
 import SearchBar from '../../components/SearchBar/SearchBar.jsx';
@@ -59,6 +59,27 @@ export default function Queries() {
     fetchQueries(meta.page);
   };
 
+  const handleStatusChange = async (queryId, newStatus) => {
+    const query = queries.find((q) => q._id === queryId);
+    if (!query) return;
+    try {
+      const updatedData = {
+        title: query.title,
+        description: query.description,
+        customerName: query.customerName,
+        customerEmail: query.customerEmail,
+        priority: query.priority,
+        status: newStatus,
+      };
+      await updateQuery(queryId, updatedData);
+      setQueries((prev) =>
+        prev.map((q) => (q._id === queryId ? { ...q, status: newStatus } : q))
+      );
+    } catch (err) {
+      console.error('Failed to update status:', err);
+    }
+  };
+
   return (
     <div>
       <h2 className={styles.title}>
@@ -73,7 +94,11 @@ export default function Queries() {
       {loading ? (
         <Loader />
       ) : (
-        <QueryTable queries={queries} onDelete={setDeleteId} />
+        <QueryTable
+          queries={queries}
+          onDelete={setDeleteId}
+          onStatusChange={handleStatusChange}
+        />
       )}
 
       {isAdmin && (

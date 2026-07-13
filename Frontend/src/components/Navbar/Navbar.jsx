@@ -6,24 +6,17 @@ export default function Navbar() {
   const { user, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
   return (
     <header className={styles.navbar}>
-      <h1 className={styles.logo}>
-        {isAdmin ? 'QueryFlow — Admin Portal' : 'QueryFlow — Customer Desk'}
-      </h1>
-      <div className={styles.userInfo}>
-        {user && (
-          <span className={styles.userName}>
-            Welcome, <strong>{user.name || user.username || 'User'}</strong>
-          </span>
-        )}
-        <button onClick={handleLogout} className={styles.logoutBtn}>
-          Sign Out
+      <div className={styles.left}>
+        <span className={styles.dot} />
+        <span className={styles.brand}>QueryFlow</span>
+        {isAdmin && <span className={styles.badge}>Admin</span>}
+      </div>
+      <div className={styles.right}>
+        {user && <span className={styles.user}>{user.name || user.username}</span>}
+        <button className={styles.logout} onClick={() => { logout(); navigate('/login'); }}>
+          Sign out
         </button>
       </div>
     </header>

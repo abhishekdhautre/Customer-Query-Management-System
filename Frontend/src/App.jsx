@@ -15,22 +15,22 @@ function ProtectedRoute({ children }) {
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 }
 
-function AppRoutes() {
+function AdminRoute({ children }) {
   const { isAdmin } = useAuth();
+  return isAdmin ? children : <Navigate to="/" replace />;
+}
 
+function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/submit" element={<SubmitQuery />} />
-      <Route
-        path="/"
-        element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}
-      >
-        <Route index element={isAdmin ? <Dashboard /> : <Queries />} />
-        <Route path="queries" element={isAdmin ? <Queries /> : <Navigate to="/" replace />} />
-        <Route path="queries/create" element={isAdmin ? <CreateQuery /> : <SubmitQuery />} />
+      <Route path="/" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+        <Route index element={<Dashboard />} />
+        <Route path="queries" element={<Queries />} />
+        <Route path="queries/create" element={<AdminRoute><CreateQuery /></AdminRoute>} />
         <Route path="queries/:id" element={<QueryDetails />} />
-        <Route path="queries/:id/edit" element={isAdmin ? <EditQuery /> : <Navigate to="/" replace />} />
+        <Route path="queries/:id/edit" element={<AdminRoute><EditQuery /></AdminRoute>} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
@@ -46,4 +46,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
-

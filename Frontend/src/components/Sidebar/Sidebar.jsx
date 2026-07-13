@@ -13,7 +13,7 @@ export default function Sidebar() {
       ]
     : [
         { to: '/', label: 'My Queries' },
-        { to: '/queries/create', label: 'Submit Query' },
+        { to: '/submit', label: 'Submit Query' },
       ];
 
   return (

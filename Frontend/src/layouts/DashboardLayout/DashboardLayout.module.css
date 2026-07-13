@@ -1,3 +1,33 @@
-.layout { display: flex; flex-direction: column; height: 100vh; }
-.body { display: flex; flex: 1; overflow: hidden; }
-.main { flex: 1; padding: 24px; overflow-y: auto; min-width: 0; }
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.aurora {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.layout > *:not(.aurora) {
+  position: relative;
+  z-index: 1;
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.main {
+  flex: 1;
+  padding: 28px 32px;
+  overflow-y: auto;
+  min-width: 0;
+}
+

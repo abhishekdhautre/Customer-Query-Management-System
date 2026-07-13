@@ -2,162 +2,112 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext.jsx';
-import Lightfall from '../../components/Lightfall/Lightfall.jsx';
+import Aurora from '../../components/Aurora/Aurora.jsx';
 import styles from './Login.module.css';
 
 export default function Login() {
-  const [activeTab, setActiveTab] = useState('user-login'); // 'user-login', 'user-register', 'admin-login'
+  const [tab, setTab] = useState('login');
   const [form, setForm] = useState({ name: '', email: '', username: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    setError('');
-    setForm({ name: '', email: '', username: '', password: '' });
-  };
+  const switchTab = (t) => { setTab(t); setError(''); setForm({ name: '', email: '', username: '', password: '' }); };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-
-    let endpoint = '';
-    let payload = {};
-
     try {
-      if (activeTab === 'user-login') {
+      let endpoint, payload;
+      if (tab === 'login') {
         endpoint = '/auth/login';
         payload = { email: form.email, password: form.password };
-      } else if (activeTab === 'user-register') {
+      } else if (tab === 'register') {
         endpoint = '/auth/register';
         payload = { name: form.name, email: form.email, password: form.password };
-      } else if (activeTab === 'admin-login') {
+      } else {
         endpoint = '/auth/admin/login';
         payload = { username: form.username, password: form.password };
       }
-
       const { data } = await axios.post(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, payload);
       login(data.token);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Authentication failed. Please verify credentials.');
+      setError(err.response?.data?.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.backgroundContainer}>
-        <Lightfall
-          colors={['#A6C8FF', '#5227FF', '#FF9FFC']}
-          backgroundColor="#020412"
-          speed={0.8}
-          streakCount={8}
-          streakWidth={1}
-          streakLength={1.2}
-          glow={1.2}
-          density={0.8}
-          twinkle={1}
-          zoom={2.5}
-          backgroundGlow={0.6}
-          opacity={0.35}
-          mouseInteraction={true}
-          mouseStrength={1}
-          mouseRadius={0.8}
+    <div className={styles.page}>
+      <div className={styles.aurora}>
+        <Aurora
+          colorStops={['#5227FF', '#B497CF', '#7cff67']}
+          blend={0.6}
+          amplitude={1.2}
+          speed={0.4}
         />
       </div>
+
       <div className={styles.card}>
-        <h2 className={styles.title}>
-          {activeTab === 'user-register' ? 'Create Account' : 'Portal Sign In'}
-        </h2>
-        
+        <div className={styles.brand}>
+          <span className={styles.brandDot} />
+          QueryFlow
+        </div>
+
+        <h1 className={styles.heading}>
+          {tab === 'register' ? 'Create an account' : 'Welcome back'}
+        </h1>
+        <p className={styles.sub}>
+          {tab === 'login' && 'Sign in to track your queries.'}
+          {tab === 'register' && 'Sign up to start submitting queries.'}
+          {tab === 'admin' && 'Admin access only.'}
+        </p>
+
         <div className={styles.tabs}>
-          <button 
-            type="button"
-            className={`${styles.tab} ${activeTab === 'user-login' ? styles.activeTab : ''}`}
-            onClick={() => handleTabChange('user-login')}
-          >
-            Customer Login
-          </button>
-          <button 
-            type="button"
-            className={`${styles.tab} ${activeTab === 'user-register' ? styles.activeTab : ''}`}
-            onClick={() => handleTabChange('user-register')}
-          >
-            Sign Up
-          </button>
-          <button 
-            type="button"
-            className={`${styles.tab} ${activeTab === 'admin-login' ? styles.activeTab : ''}`}
-            onClick={() => handleTabChange('admin-login')}
-          >
-            Staff Access
-          </button>
+          <button type="button" className={tab === 'login' ? styles.activeTab : styles.tab} onClick={() => switchTab('login')}>Login</button>
+          <button type="button" className={tab === 'register' ? styles.activeTab : styles.tab} onClick={() => switchTab('register')}>Register</button>
+          <button type="button" className={tab === 'admin' ? styles.activeTab : styles.tab} onClick={() => switchTab('admin')}>Admin</button>
         </div>
 
         {error && <div className={styles.error}>{error}</div>}
 
-        <form onSubmit={handleSubmit}>
-          {activeTab === 'user-register' && (
+        <form onSubmit={handleSubmit} className={styles.form}>
+          {tab === 'register' && (
             <div className={styles.field}>
-              <label>Full Name</label>
-              <input
-                type="text"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                required
-                placeholder="John Doe"
-              />
+              <label>Full name</label>
+              <input type="text" placeholder="Jane Smith" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
             </div>
           )}
 
-          {activeTab !== 'admin-login' ? (
+          {tab !== 'admin' ? (
             <div className={styles.field}>
-              <label>Email Address</label>
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                required
-                placeholder="customer@example.com"
-              />
+              <label>Email</label>
+              <input type="email" placeholder="you@example.com" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
             </div>
           ) : (
             <div className={styles.field}>
               <label>Username</label>
-              <input
-                type="text"
-                value={form.username}
-                onChange={(e) => setForm({ ...form, username: e.target.value })}
-                required
-                placeholder="admin"
-              />
+              <input type="text" placeholder="admin" value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} required />
             </div>
           )}
 
           <div className={styles.field}>
             <label>Password</label>
-            <input
-              type="password"
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-              required
-              placeholder="••••••••"
-            />
+            <input type="password" placeholder="••••••••" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required />
           </div>
 
-          <button type="submit" disabled={loading} className={styles.submitBtn}>
-            {loading ? 'Processing...' : activeTab === 'user-register' ? 'Register Account' : 'Sign In'}
+          <button type="submit" disabled={loading} className={styles.btn}>
+            {loading ? 'Please wait…' : tab === 'register' ? 'Create account' : 'Sign in'}
           </button>
         </form>
 
-        <p className={styles.footerText}>
-          Need help? <a href="/submit">Submit a direct query</a> without logging in.
+        <p className={styles.footer}>
+          No account needed — <a href="/submit">submit a query directly</a>
         </p>
       </div>
     </div>

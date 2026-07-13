@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { submitQuery } from '../../services/queryService.js';
+import Aurora from '../../components/Aurora/Aurora.jsx';
 import styles from './SubmitQuery.module.css';
 
 export default function SubmitQuery() {
@@ -60,6 +61,14 @@ export default function SubmitQuery() {
   if (submitted) {
     return (
       <div className={styles.container}>
+        <div className={styles.aurora}>
+          <Aurora
+            colorStops={['#5227FF', '#B497CF', '#7cff67']}
+            blend={0.6}
+            amplitude={1.2}
+            speed={0.4}
+          />
+        </div>
         <div className={`${styles.card} ${styles.successBox}`}>
           <h2 className={styles.successTitle}>Query Submitted!</h2>
           <p className={styles.successText}>
@@ -80,6 +89,14 @@ export default function SubmitQuery() {
 
   return (
     <div className={styles.container}>
+      <div className={styles.aurora}>
+        <Aurora
+          colorStops={['#5227FF', '#B497CF', '#7cff67']}
+          blend={0.6}
+          amplitude={1.2}
+          speed={0.4}
+        />
+      </div>
       <div className={styles.card}>
         <h2 className={styles.title}>Submit a Query</h2>
         <p className={styles.description}>

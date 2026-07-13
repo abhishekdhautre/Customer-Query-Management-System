@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import StatusBadge from '../StatusBadge/StatusBadge.jsx';
 import styles from './QueryTable.module.css';
 
-export default function QueryTable({ queries, onDelete }) {
+export default function QueryTable({ queries, onDelete, onStatusChange }) {
   const { isAdmin } = useAuth();
 
   return (
@@ -32,10 +32,24 @@ export default function QueryTable({ queries, onDelete }) {
                 <td style={{ fontWeight: 500 }}>{q.title}</td>
                 {isAdmin && <td>{q.customerName}</td>}
                 <td>
-                  <StatusBadge status={q.status} />
+                  {isAdmin ? (
+                    <select
+                      value={q.status}
+                      onChange={(e) => onStatusChange(q._id, e.target.value)}
+                      className={`${styles.statusSelect} ${styles[q.status]}`}
+                    >
+                      {['open', 'in-progress', 'resolved', 'closed'].map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <StatusBadge status={q.status} />
+                  )}
                 </td>
-                <td style={{ textTransform: 'capitalize' }}>
-                  <span className={`priority-${q.priority}`}>{q.priority}</span>
+                <td>
+                  <span className={`priority-${(q.priority || 'medium').toLowerCase()}`}>{q.priority}</span>
                 </td>
                 <td>{new Date(q.createdAt).toLocaleDateString()}</td>
                 <td>
